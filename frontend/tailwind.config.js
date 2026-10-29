@@ -1,33 +1,31 @@
-/** @type {import('tailwindcss').Config} */
+const t = (n) => `rgb(var(--${n}) / <alpha-value>)`;
 module.exports = {
   darkMode: 'class',
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+        mono: ['"JetBrains Mono"', 'Menlo', 'monospace'],
       },
       colors: {
-        dark: {
-          base: '#090A0C',
-          surface: '#111418',
-          elevated: '#161A20',
-          border: '#1F242D',
-          borderLight: '#2A313C',
-          textMuted: '#64748B',
-          textBody: '#94A3B8',
-          textHead: '#F8FAFC',
-        }
+        canvas: t('canvas'), surface: t('surface'), sunken: t('sunken'), line: t('line'), 'line-strong': t('line-strong'),
+        fg: t('fg'), 'fg-muted': t('fg-muted'), 'fg-subtle': t('fg-subtle'),
+        brand: { DEFAULT: t('brand'), hover: t('brand-hover'), fg: t('brand-fg') },
+        ok: t('ok'), warn: t('warn'), bad: t('bad'), info: t('info'),
+        lime: t('lime'), snow: t('snow'), ink: t('ink'), cobalt: t('cobalt'), deep: t('deep'),
       },
       boxShadow: {
-        'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.4)',
-        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5)',
-        'glow': '0 0 20px -5px rgba(255, 255, 255, 0.05)',
-      }
+        card: '0 0 0 1.5px rgb(var(--ink)), 6px 6px 0 0 rgb(var(--deep))',
+        pop: '0 0 0 1.5px rgb(var(--ink)), 10px 10px 0 0 rgb(var(--deep))',
+        focus: '0 0 0 3px rgb(var(--lime) / 0.6)',
+      },
+      borderRadius: { lg: '0.25rem', xl: '0.375rem', '2xl': '0.5rem' },
+      keyframes: { 'fade-up': { '0%': { opacity: 0, transform: 'translateY(10px)' }, '100%': { opacity: 1, transform: 'none' } } },
+      animation: { 'fade-up': 'fade-up .5s ease-out both' },
     },
   },
   plugins: [],
-}
+};

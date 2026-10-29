@@ -75,3 +75,6 @@ dist/
 # API Keys (keep these secret!)
 .env.linkedin
 .env.test
+
+# Understand Plugin 
+.ua

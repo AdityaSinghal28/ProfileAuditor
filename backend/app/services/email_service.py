@@ -1,4 +1,5 @@
 import os
+import html
 from typing import Optional
 import smtplib
 from email.mime.text import MIMEText
@@ -42,26 +43,34 @@ def create_email_body(
     interview_date: Optional[str] = None,
     interview_location: Optional[str] = None
 ) -> str:
-    """Create email body for interview invitation"""
+    """Create email body for interview invitation with HTML escaping to prevent injection"""
     # Default message if not provided
     if not message:
-        message = "We were impressed with your qualifications and would like to invite you for an interview."
-    
+        raw_message = "We were impressed with your qualifications and would like to invite you for an interview."
+    else:
+        raw_message = message
+
+    # Sanitize inputs against HTML injection
+    safe_name = html.escape(str(name or "Candidate"))
+    safe_message = html.escape(str(raw_message)).replace("\n", "<br>")
+    safe_date = html.escape(str(interview_date)) if interview_date else None
+    safe_location = html.escape(str(interview_location)) if interview_location else None
+
     # Create email body
     body = f"""
     <html>
     <body>
         <h2>Interview Invitation</h2>
-        <p>Dear {name},</p>
-        <p>{message}</p>
+        <p>Dear {safe_name},</p>
+        <p>{safe_message}</p>
         <p>Your Reality Score: <strong>{score:.1f}/100</strong></p>
     """
     
     # Add interview details if provided
-    if interview_date:
-        body += f"<p><strong>Interview Date:</strong> {interview_date}</p>"
-    if interview_location:
-        body += f"<p><strong>Interview Location:</strong> {interview_location}</p>"
+    if safe_date:
+        body += f"<p><strong>Interview Date:</strong> {safe_date}</p>"
+    if safe_location:
+        body += f"<p><strong>Interview Location:</strong> {safe_location}</p>"
     
     # Add closing
     body += f"""

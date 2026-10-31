@@ -33,6 +33,13 @@ def test_storage():
     
     store.set_score("test-1", {"score": 85.0})
     assert score_storage["test-1"]["score"] == 85.0
+
+    # Test TTL pruning
+    store.timestamps["test-old"] = 1000.0  # ancient timestamp
+    store.resumes["test-old"] = {"resume_id": "test-old"}
+    pruned = store.prune_expired(max_age=10)
+    assert pruned >= 1
+    assert "test-old" not in store.resumes
     
     store.clear()
     assert len(store.resumes) == 0

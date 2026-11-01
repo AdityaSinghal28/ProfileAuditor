@@ -1,112 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Design tokens (RGB triplets so Tailwind alpha works) ---------- */
+/* Palette: cobalt 60 / snow 30 / lime 10 */
+:root {
+  --cobalt: 11 68 224; --deep: 6 30 130; --ink: 7 24 94; --snow: 255 250 250; --lime: 200 255 0;
+  --canvas: 11 68 224; --surface: 255 250 250; --sunken: 232 238 255;
+  --line: 196 208 247; --line-strong: 120 146 235;
+  --fg: 7 24 94; --fg-muted: 62 82 160; --fg-subtle: 112 130 200;
+  --brand: 11 68 224; --brand-hover: 6 30 130; --brand-fg: 255 250 250;
+  --ok: 9 50 190; --warn: 74 96 168; --bad: 7 24 94; --info: 11 68 224; --shadow: 6 30 130;
+  color-scheme: light;
+}
+
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    color-scheme: dark;
-  }
-  
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #090A0C;
-    color: #E2E8F0;
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--fg));
   }
+  ::selection { background: rgb(var(--lime)); color: rgb(var(--ink)); }
+  :focus-visible { outline: 2px solid rgb(var(--lime)); outline-offset: 2px; }
+}
 
-  ::selection {
-    background-color: #38BDF8;
-    color: #090A0C;
+@layer components {
+  .field {
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-fg placeholder:text-fg-subtle transition;
   }
+  .field:focus { @apply outline-none border-brand shadow-focus; }
+  .label { @apply mb-1.5 block text-xs font-medium text-fg-muted; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-wider text-fg-subtle; }
 }
 
-/* Custom sleek dark scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* Slim scrollbars */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(var(--line-strong)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--fg-subtle)); }
 
-::-webkit-scrollbar-track {
-  background: #090A0C;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #262C36;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #3F4756;
-}
-
-/* Authentic Document Canvas Styles */
+/* ---------- Document canvas (resume editor) — always paper-white ---------- */
 .pdf-exact-page {
-  position: relative;
-  background-color: #ffffff;
-  color: #000000;
-  box-sizing: border-box;
-  margin: 0 auto 24px auto;
-  user-select: text;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
-}
-
-.pdf-exact-page p {
-  position: absolute !important;
-  margin: 0 !important;
-  white-space: nowrap !important;
-  outline: none;
-  cursor: text;
-  line-height: normal;
-}
-
-.pdf-exact-page p:focus {
-  background-color: rgba(56, 189, 248, 0.12);
-  border-radius: 2px;
-}
-
-.docx-exact-page table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 12px;
-}
-
-.docx-exact-page td, .docx-exact-page th {
-  padding: 4px 8px;
-  vertical-align: top;
-}
-
-.docx-exact-page h1 {
-  font-size: 16pt;
-  font-weight: 700;
-  margin-top: 14px;
-  margin-bottom: 4px;
-  border-bottom: 1.5px solid #0f172a;
-  padding-bottom: 2px;
-}
-
-.docx-exact-page h2 {
-  font-size: 13pt;
-  font-weight: 700;
-  margin-top: 10px;
-  margin-bottom: 3px;
-}
-
-.docx-exact-page p {
-  margin-bottom: 4px;
-  line-height: 1.45;
-}
-
-.docx-exact-page ul {
-  margin-left: 20px;
-  margin-bottom: 6px;
-  list-style-type: disc;
-}
-
-.docx-exact-page li {
-  margin-bottom: 2px;
-}
+  position: relative; background-color: #fff; color: #000; box-sizing: border-box;
+  margin: 0 auto 24px auto; user-select: text;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,.2), 0 8px 10px -6px rgba(0,0,0,.2);

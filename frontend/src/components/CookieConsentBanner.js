@@ -1,65 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { buttonClass } from './ui';
 
 function CookieConsentBanner() {
-  const [showBanner, setShowBanner] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('profileauditor_cookie_consent');
-    if (!consent) {
-      setShowBanner(true);
-    }
+    if (!localStorage.getItem('profileauditor_cookie_consent')) setShow(true);
   }, []);
 
-  const handleAccept = () => {
-    localStorage.setItem('profileauditor_cookie_consent', 'accepted');
-    setShowBanner(false);
+  const choose = (value) => {
+    localStorage.setItem('profileauditor_cookie_consent', value);
+    setShow(false);
   };
 
-  const handleDecline = () => {
-    localStorage.setItem('profileauditor_cookie_consent', 'essential_only');
-    setShowBanner(false);
-  };
-
-  if (!showBanner) return null;
+  if (!show) return null;
 
   return (
     <div
       role="region"
-      aria-label="Cookie consent banner"
-      className="fixed bottom-0 inset-x-0 z-50 p-4 bg-[#111418] border-t border-[#1F242D] shadow-2xl"
+      aria-label="Cookie consent"
+      data-no-print
+      className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-2xl animate-fade-up rounded-xl bg-surface p-4 shadow-pop sm:left-auto sm:right-4 sm:mx-0"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="text-xs text-slate-300 max-w-3xl leading-relaxed">
-          <p>
-            <strong className="text-white">Cookie & Privacy Notice:</strong> We use essential local storage to save your editor settings, zoom preferences, and audit session state. We do not use third-party advertising or cross-site tracking cookies. Read our{' '}
-            <Link to="/cookies" className="text-slate-100 underline hover:text-white font-medium">
-              Cookie Policy
-            </Link>{' '}
-            and{' '}
-            <Link to="/privacy" className="text-slate-100 underline hover:text-white font-medium">
-              Privacy Policy
-            </Link>{' '}
-            for full transparency.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 flex-shrink-0 w-full md:w-auto">
-          <button
-            type="button"
-            onClick={handleDecline}
-            className="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-medium bg-[#161A20] hover:bg-[#1E232B] text-slate-300 border border-[#262C36] transition-all focus:ring-2 focus:ring-slate-400 focus:outline-none"
-          >
-            Essential Only
-          </button>
-          <button
-            type="button"
-            onClick={handleAccept}
-            className="flex-1 md:flex-initial px-4 py-2 rounded-lg text-xs font-semibold bg-white hover:bg-slate-200 text-[#090A0C] transition-all focus:ring-2 focus:ring-white focus:outline-none shadow-sm"
-          >
-            Accept All
-          </button>
-        </div>
+      <p className="text-xs leading-relaxed text-fg-muted">
+        <span className="font-semibold text-fg">Cookies &amp; privacy.</span> We only use essential local storage for
+        editor settings and audit session state — no advertising or cross-site tracking. See the{' '}
+        <Link to="/cookies" className="font-medium text-brand hover:underline">Cookie Policy</Link> and{' '}
+        <Link to="/privacy" className="font-medium text-brand hover:underline">Privacy Policy</Link>.
+      </p>
+      <div className="mt-3 flex items-center justify-end gap-2">
+        <button type="button" onClick={() => choose('essential_only')} className={buttonClass('secondary', 'sm')}>
+          Essential only
+        </button>
+        <button type="button" onClick={() => choose('accepted')} className={buttonClass('primary', 'sm')}>
+          Accept all
+        </button>
       </div>
     </div>
   );

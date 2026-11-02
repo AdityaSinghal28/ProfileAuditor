@@ -23,12 +23,17 @@ except ImportError:
     print("pdfplumber not available")
 
 try:
-    import fitz  # PyMuPDF
+    import pymupdf as fitz
     PYMUPDF_AVAILABLE = True
     print("PyMuPDF library loaded successfully")
 except ImportError:
-    PYMUPDF_AVAILABLE = False
-    print("PyMuPDF not available")
+    try:
+        import fitz  # Fallback
+        PYMUPDF_AVAILABLE = True
+        print("PyMuPDF library loaded successfully")
+    except ImportError:
+        PYMUPDF_AVAILABLE = False
+        print("PyMuPDF not available")
 
 try:
     from pdfminer.high_level import extract_text as pdfminer_extract_text
@@ -481,42 +486,6 @@ def extract_information(text: str) -> Dict[str, Any]:
     print(f"Candidate: {parsed.get('name')}")
     print(f"GitHub Handle: {parsed.get('github_username')}")
     print(f"LeetCode Handle: {parsed.get('leetcode_username')}")
-    print(f"Technical Skills ({len(parsed['technical_skills'])}): {parsed['technical_skills']}")
-    print(f"Soft Skills ({len(parsed['soft_skills'])}): {parsed['soft_skills']}")
-    print(f"Projects ({len(parsed['projects'])}): {[p['name'] for p in parsed['projects']]}")
-
-    return parsed
-
-    # 4. Standardize technical vs soft skills
-    tech_skills = parsed.get("technical_skills") or []
-    soft_skills = parsed.get("soft_skills") or []
-    
-    # Ensure lists of clean strings
-    parsed["technical_skills"] = [str(s).strip() for s in tech_skills if str(s).strip()]
-    parsed["soft_skills"] = [str(s).strip() for s in soft_skills if str(s).strip()]
-    # Populate "skills" with technical_skills for backwards compatibility
-    parsed["skills"] = parsed["technical_skills"]
-
-    # 5. Clean projects
-    raw_projects = parsed.get("projects") or []
-    cleaned_projects = []
-    for p in raw_projects:
-        if isinstance(p, dict) and p.get("name"):
-            cleaned_projects.append({
-                "name": str(p["name"]).strip(),
-                "description": str(p.get("description", "")).strip()
-            })
-        elif isinstance(p, str) and p.strip():
-            cleaned_projects.append({
-                "name": p.strip(),
-                "description": ""
-            })
-    parsed["projects"] = cleaned_projects
-    parsed["status"] = "completed"
-
-    print(f"=== EXTRACTION COMPLETE ===")
-    print(f"Candidate: {parsed.get('name')}")
-    print(f"GitHub Handle: {parsed.get('github_username')}")
     print(f"Technical Skills ({len(parsed['technical_skills'])}): {parsed['technical_skills']}")
     print(f"Soft Skills ({len(parsed['soft_skills'])}): {parsed['soft_skills']}")
     print(f"Projects ({len(parsed['projects'])}): {[p['name'] for p in parsed['projects']]}")

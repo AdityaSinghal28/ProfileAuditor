@@ -4,6 +4,7 @@ from typing import Optional
 
 from app.services.email_service import send_interview_invitation
 from app.models.invite import InviteResponse
+from app.core.storage import resume_storage, score_storage
 
 router = APIRouter()
 
@@ -15,16 +16,10 @@ class InviteRequest(BaseModel):
 @router.post("/{resume_id}", response_model=InviteResponse)
 async def send_invite(resume_id: str, invite_data: InviteRequest, background_tasks: BackgroundTasks):
     """Send an interview invitation to a candidate"""
-    # Get resume data
-    from app.api.endpoints.resume import resume_storage
-    
     if resume_id not in resume_storage:
         raise HTTPException(status_code=404, detail="Resume not found")
     
     resume_data = resume_storage[resume_id]
-    
-    # Get score data
-    from app.api.endpoints.score import score_storage
     
     if resume_id not in score_storage:
         raise HTTPException(status_code=404, detail="Score not found. Calculate score first.")

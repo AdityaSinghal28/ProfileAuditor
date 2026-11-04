@@ -29,3 +29,20 @@ app.add_middleware(
     allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include API router with /api prefix
+app.include_router(api_router, prefix="/api")
+
+@app.get("/")
+def root():
+    return {"message": "ProfileAuditor Backend API", "status": "running"}
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app.options("/{path:path}")
+def options_handler(path: str):
+    return {"message": "OK"}

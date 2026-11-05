@@ -1,160 +1,130 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { clearRecentAudits, getRecentAudits, timeAgo } from '../utils/recentAudits';
+import { buttonClass } from '../components/ui';
+import { CountUp, Reveal } from '../components/motion';
+
+const METHOD = [
+  ['Extract', 'Text, contacts, handles, skills and projects pulled from your PDF or DOCX.', 'PDF · DOCX'],
+  ['Audit the code', 'Forks filtered out. Commit authorship, stars and language share inspected.', 'GitHub'],
+  ['Check the grind', 'Solved counts, contest rating and global rank read straight from LeetCode.', 'LeetCode'],
+  ['Score reality', 'One number from 0 to 100 for how much of the story the evidence supports.', '0–100'],
+];
+const LEDGER = [['Go · 5 yrs', '14 original repos', true], ['TypeScript', '9 original repos', true], ['Kafka pipeline', 'StreamKit · matched', true], ['Kubernetes', 'no trace in public code', false]];
+const Tape = () => (
+  <span className="flex shrink-0 items-center gap-8 pr-8 font-display text-2xl font-extrabold uppercase tracking-tight">
+    {['Claimed', 'Checked', 'Proven'].map((w) => (<span key={w} className="flex items-center gap-8">{w}<span className="text-lime">→</span></span>))}
+  </span>
+);
 
 function HomePage() {
+  const [recents, setRecents] = useState(getRecentAudits);
+
   return (
-    <div className="max-w-5xl mx-auto space-y-16 sm:space-y-20 pt-4 sm:pt-8">
-      {/* Hero section */}
-      <section className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#161A20] border border-[#262C36] text-xs font-medium text-slate-300">
-          <span className="w-2 h-2 rounded-sm bg-emerald-400"></span>
-          <span>Automated Engineering Resume Auditing</span>
-        </div>
-
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-[1.12]">
-          Verify resume claims against authentic code and DSA proof.
-        </h1>
-
-        <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Upload a developer resume to audit public GitHub codebases, filter out forked templates, inspect commit authorship, and verify LeetCode problem solving.
-        </p>
-
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link
-            to="/upload"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white hover:bg-slate-200 text-[#090A0C] font-semibold text-sm transition-all active:scale-[0.98] shadow-sm"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
-            Audit a Resume
-          </Link>
-          <a
-            href="#how-it-works"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#161A20] hover:bg-[#1E232B] text-slate-200 font-medium text-sm border border-[#262C36] transition-all"
-          >
-            How It Works
-          </a>
-        </div>
-
-        {/* Sample Audit Preview Card */}
-        <div className="mt-12 max-w-3xl mx-auto bg-[#111418] rounded-xl border border-[#1F242D] p-6 text-left shadow-card">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#1F242D]">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-lg bg-white text-[#090A0C] flex items-center justify-center font-bold text-sm">
-                AC
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-white text-base">Alex Chen</h3>
-                  <span className="text-xs px-2 py-0.5 rounded bg-[#161A20] text-slate-300 font-medium border border-[#262C36]">
-                    Senior Full-Stack Engineer
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5 font-mono">github.com/alexchen-dev • leetcode.com/u/alexchen_code</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 bg-[#161A20] border border-[#262C36] px-4 py-2 rounded-lg">
-              <div className="text-right">
-                <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Reality Score</p>
-                <p className="text-xl font-bold text-white leading-none font-mono">92<span className="text-xs font-normal text-slate-500">/100</span></p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-5 text-xs">
-            <div className="p-3 rounded-lg bg-[#161A20] border border-[#262C36]">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">GitHub Audit</span>
-              <p className="text-sm font-bold text-white mt-1">16 Original Repos</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">430+ authored commits</p>
-            </div>
-
-            <div className="p-3 rounded-lg bg-[#161A20] border border-[#262C36]">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">LeetCode Proof</span>
-              <p className="text-sm font-bold text-white mt-1">248 Solved (128 Med)</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">Top 7.4% Contest Rating</p>
-            </div>
-
-            <div className="p-3 rounded-lg bg-[#161A20] border border-[#262C36]">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Codebase Match</span>
-              <p className="text-sm font-bold text-white mt-1">2 / 2 Projects Verified</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">Source repositories matched</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works section */}
-      <section id="how-it-works" className="pt-8 border-t border-[#1F242D]">
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <h2 className="text-2xl font-bold text-white tracking-tight">
-            How The Pipeline Works
-          </h2>
-          <p className="text-sm text-slate-400 mt-2">
-            A grounded verification pipeline comparing resume assertions with verifiable public footprints.
+    <div className="text-snow">
+      {/* HERO */}
+      <section className="mx-auto grid max-w-[1320px] items-center gap-14 px-4 pb-24 pt-16 sm:px-8 lg:grid-cols-12 lg:pt-24">
+        <div className="lg:col-span-7">
+          <p style={{ '--d': '.05s' }} className="rise font-mono text-[11px] uppercase tracking-[0.18em] text-snow/70">Resume verification · GitHub × LeetCode</p>
+          <h1 style={{ '--d': '.15s' }} className="rise mt-6 font-display text-[clamp(3.4rem,9.5vw,8.5rem)] font-extrabold leading-[0.86] tracking-tighter">
+            Resumes <span className="strike-line">claim</span>.<br />
+            Code <span className="mark">proves</span>.
+          </h1>
+          <p style={{ '--d': '.35s' }} className="rise mt-8 max-w-lg font-serif text-2xl italic leading-snug text-snow/85">
+            We read the resume, then we read the repos. Whatever survives gets a Reality Score.
           </p>
+          <div style={{ '--d': '.5s' }} className="rise mt-10 flex flex-wrap items-center gap-4">
+            <Link to="/upload" className={buttonClass('lime', 'lg', 'px-7')}>Audit a resume →</Link>
+            <a href="#method" className="font-mono text-xs uppercase tracking-[0.14em] text-snow/80 underline-offset-4 hover:text-lime hover:underline">How it works</a>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#111418] p-5 rounded-xl border border-[#1F242D]">
-            <div className="w-7 h-7 rounded bg-[#161A20] text-white flex items-center justify-center font-bold text-xs mb-3 border border-[#262C36]">
-              1
+        {/* Specimen */}
+        <div style={{ '--d': '.3s' }} className="rise relative mx-auto w-full max-w-md lg:col-span-5">
+          <div className="-rotate-3 bg-snow p-6 text-ink shadow-pop">
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-fg-muted">
+              <span>Specimen · illustrative</span><span>AUD-0000</span>
             </div>
-            <h3 className="font-bold text-white text-sm">Resume Extraction</h3>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Extracts text, contact details, social handles, technical skills, and genuine projects.
-            </p>
+            <div className="mt-3 font-display text-3xl font-extrabold tracking-tighter">Alex Chen</div>
+            <ul className="mt-5 divide-y divide-line border-y border-line">
+              {LEDGER.map(([claim, ev, ok], i) => (
+                <li key={claim} style={{ '--d': `${0.7 + i * 0.12}s` }} className="rise flex items-center justify-between gap-3 py-3 text-sm">
+                  <span className={ok ? 'font-semibold' : 'font-semibold text-fg-subtle line-through decoration-2'}>{claim}</span>
+                  <span className={ok ? 'bg-lime px-1.5 font-mono text-[11px]' : 'font-mono text-[11px] text-fg-subtle'}>{ev}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 flex items-end justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-muted">Reality score</span>
+              <CountUp value={78} ms={1500} className="font-display text-7xl font-extrabold leading-none tracking-tighter" />
+            </div>
           </div>
-
-          <div className="bg-[#111418] p-5 rounded-xl border border-[#1F242D]">
-            <div className="w-7 h-7 rounded bg-[#161A20] text-white flex items-center justify-center font-bold text-xs mb-3 border border-[#262C36]">
-              2
-            </div>
-            <h3 className="font-bold text-white text-sm">Anti-Fork Code Audit</h3>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Filters out forked repositories, inspects commit logs, stars, and language byte frequency.
-            </p>
-          </div>
-
-          <div className="bg-[#111418] p-5 rounded-xl border border-[#1F242D]">
-            <div className="w-7 h-7 rounded bg-[#161A20] text-white flex items-center justify-center font-bold text-xs mb-3 border border-[#262C36]">
-              3
-            </div>
-            <h3 className="font-bold text-white text-sm">LeetCode Verification</h3>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Queries LeetCode GraphQL API for actual solved problem metrics, contest rating, and rank.
-            </p>
-          </div>
-
-          <div className="bg-[#111418] p-5 rounded-xl border border-[#1F242D]">
-            <div className="w-7 h-7 rounded bg-[#161A20] text-white flex items-center justify-center font-bold text-xs mb-3 border border-[#262C36]">
-              4
-            </div>
-            <h3 className="font-bold text-white text-sm">Reality Scoring</h3>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Calculates an objective Reality Score out of 100 without penalizing self-reported skills.
-            </p>
+          <div className="absolute -right-4 -top-10 h-32 w-32 sm:-right-8">
+            <svg viewBox="0 0 120 120" className="spin-slow h-full w-full rounded-full bg-lime text-ink">
+              <defs><path id="c" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" /></defs>
+              <text fontFamily="JetBrains Mono, monospace" fontSize="10.5" fontWeight="600" letterSpacing="2.4" fill="currentColor">
+                <textPath href="#c">VERIFIED BY CODE • VERIFIED BY CODE •</textPath>
+              </text>
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center font-display text-3xl font-extrabold text-ink">✓</span>
           </div>
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="bg-[#111418] border border-[#1F242D] rounded-2xl p-8 sm:p-10 text-center text-white">
-        <h2 className="text-2xl font-bold tracking-tight">
-          Ready to audit candidate claims?
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto mt-2">
-          Upload any engineering resume in PDF or DOCX format for an instant audit report.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/upload"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-white hover:bg-slate-200 text-[#090A0C] font-semibold text-xs transition-all active:scale-[0.98]"
-          >
-            Upload Resume Now
-          </Link>
+      {/* TAPE */}
+      <div className="overflow-hidden border-y border-snow/25 py-4" aria-hidden="true">
+        <div className="marquee"><Tape /><Tape /><Tape /><Tape /></div>
+      </div>
+
+      {/* METHOD (snow) */}
+      <section id="method" className="bg-snow text-ink">
+        <div className="mx-auto max-w-[1320px] px-4 py-24 sm:px-8">
+          <h2 className="max-w-3xl font-display text-[clamp(2.4rem,6vw,5rem)] font-extrabold leading-[0.92] tracking-tighter">
+            Four checks. <span className="font-serif font-normal italic text-brand">Zero vibes.</span>
+          </h2>
+          <ol className="mt-14 border-b border-ink/20">
+            {METHOD.map(([t, d, tag], i) => (
+              <Reveal as="li" delay={i * 90} key={t} className="group grid items-center gap-4 border-t border-ink/20 px-2 py-8 transition-colors hover:bg-brand hover:text-snow sm:grid-cols-12">
+                <span className="outline-num font-display text-6xl font-extrabold leading-none text-brand group-hover:text-lime sm:col-span-2">0{i + 1}</span>
+                <h3 className="font-display text-3xl font-bold tracking-tight sm:col-span-4">{t}</h3>
+                <p className="max-w-md text-base leading-relaxed text-fg-muted group-hover:text-snow/85 sm:col-span-5">{d}</p>
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] sm:col-span-1 sm:text-right">{tag}</span>
+              </Reveal>
+            ))}
+          </ol>
         </div>
+      </section>
+
+      {/* LEDGER */}
+      <section className="mx-auto max-w-[1320px] px-4 py-24 sm:px-8">
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="font-display text-[clamp(2.2rem,5vw,4rem)] font-extrabold leading-none tracking-tighter">The ledger</h2>
+          {recents.length > 0 && (
+            <button onClick={() => { clearRecentAudits(); setRecents([]); }} className="font-mono text-[11px] uppercase tracking-[0.14em] text-snow/70 hover:text-lime">Clear</button>
+          )}
+        </div>
+        {recents.length === 0 ? (
+          <div className="mt-10 border-y border-snow/25 py-16">
+            <p className="font-serif text-4xl italic text-snow/90">Nothing audited yet.</p>
+            <Link to="/upload" className={buttonClass('lime', 'lg', 'mt-8 px-7')}>Run the first audit →</Link>
+          </div>
+        ) : (
+          <ul className="mt-10 border-t border-snow/25">
+            {recents.slice(0, 8).map((r, i) => (
+              <Reveal as="li" delay={i * 80} key={r.id}>
+                <Link to={`/results/${r.id}`} className="group grid items-center gap-4 border-b border-snow/25 px-2 py-5 transition hover:bg-snow/10 sm:grid-cols-12">
+                  <span className="font-mono text-xs text-snow/60 sm:col-span-1">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="truncate font-display text-3xl font-bold tracking-tight sm:col-span-5">{r.name || 'Unnamed candidate'}</span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-snow/60 sm:col-span-3">AUD-{r.id.slice(0, 8)} · {timeAgo(r.at)}</span>
+                  <span className="flex items-baseline justify-end gap-3 sm:col-span-3">
+                    <span className={`font-display text-5xl font-extrabold leading-none tracking-tighter ${r.score >= 80 ? 'bg-lime px-2 text-ink' : ''}`}>{r.score}</span>
+                    <span className="font-mono text-xs text-snow/60 transition group-hover:translate-x-1 group-hover:text-lime">→</span>
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

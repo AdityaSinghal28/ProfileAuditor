@@ -98,3 +98,110 @@ export function Badge({ tone = 'neutral', mono = false, dot = false, className =
       {dot && <span className={cx('h-1.5 w-1.5 rounded-full', DOT[tone])} />}
       {children}
     </span>
+  );
+}
+
+export function Chip({ tone = 'neutral', children }) {
+  return (
+    <span className={cx('inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium', TONES[tone])}>
+      <span className={cx('h-1.5 w-1.5 rounded-full', DOT[tone])} />
+      {children}
+    </span>
+  );
+}
+
+export function Spinner({ className = 'h-4 w-4' }) {
+  return (
+    <svg className={cx('animate-spin', className)} fill="none" viewBox="0 0 24 24" aria-hidden="true">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  );
+}
+
+export function ProgressBar({ value = 0, tone = 'brand', className = '' }) {
+  const v = Math.max(0, Math.min(100, Number(value) || 0));
+  return (
+    <div className={cx('h-1.5 w-full overflow-hidden rounded-full bg-sunken', className)} role="progressbar" aria-valuenow={v} aria-valuemin={0} aria-valuemax={100}>
+      <div className={cx('h-full rounded-full transition-all duration-700 ease-out', BAR[tone])} style={{ width: `${v}%` }} />
+    </div>
+  );
+}
+
+export function ScoreRing({ value = 0, size = 144, stroke = 10, tone = 'brand', label = '/ 100', className = '' }) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const v = Math.max(0, Math.min(100, Number(value) || 0));
+  return (
+    <div className={cx('relative shrink-0', className)} style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgb(var(--line))" strokeWidth={stroke} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={STROKE[tone]}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - v / 100)}
+          style={{ transition: 'stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)' }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-semibold leading-none tracking-tight text-fg" style={{ fontSize: size * 0.28 }}>
+          {Math.round(v)}
+        </span>
+        {label && <span className="mt-1 font-mono text-[10px] text-fg-subtle">{label}</span>}
+      </div>
+    </div>
+  );
+}
+
+export function Stat({ label, value, hint, icon: Icon, tone }) {
+  return (
+    <Card className="p-4">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-fg-muted">{label}</span>
+        {Icon && <Icon className={cx('h-4 w-4', TEXT[tone || 'neutral'])} />}
+      </div>
+      <div className="mt-2 text-2xl font-semibold tracking-tight text-fg">{value}</div>
+      {hint && <div className="mt-0.5 text-xs text-fg-subtle">{hint}</div>}
+    </Card>
+  );
+}
+
+export function KeyValue({ label, value, mono = true }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-line py-2.5 text-xs last:border-0">
+      <span className="text-fg-muted">{label}</span>
+      <span className={cx('font-medium text-fg', mono && 'font-mono')}>{value}</span>
+    </div>
+  );
+}
+
+export function EmptyState({ icon: Icon, title, description, action }) {
+  return (
+    <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+      {Icon && (
+        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-sunken text-fg-subtle">
+          <Icon className="h-5 w-5" />
+        </div>
+      )}
+      <p className="text-sm font-medium text-fg">{title}</p>
+      {description && <p className="mt-1 max-w-sm text-xs leading-relaxed text-fg-muted">{description}</p>}
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  );
+}
+
+export function Notice({ tone = 'bad', children }) {
+  return <div className={cx('flex items-start gap-2 rounded-lg border px-3.5 py-3 text-xs leading-relaxed', TONES[tone])}>{children}</div>;
+}
+
+export function Kbd({ children }) {
+  return (
+    <kbd className="rounded border border-line bg-sunken px-1.5 py-0.5 font-mono text-[10px] font-medium text-fg-muted">{children}</kbd>
+  );
+}

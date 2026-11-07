@@ -7,140 +7,126 @@
 
 ## 1. Problem Statement
 
-Recruiters and technical interviewers often rely on resume claims that are difficult to verify quickly. Manual checking of projects, programming skills, and coding activity takes time, varies between reviewers, and may provide little evidence for the final decision. Candidates also receive limited feedback about resume quality, ATS compatibility, and missing job requirements.
+Recruiters and technical interviewers often rely on resume claims that are difficult to verify quickly. Manually checking projects, programming skills, and coding activity takes time and may produce different results for different reviewers. Candidates also receive limited feedback about resume quality and missing job requirements.
 
-ProfileAuditor addresses this problem by extracting resume information, comparing technical claims with publicly available GitHub and LeetCode evidence, calculating an explainable Reality Score, and providing ATS and role-fit feedback.
+The proposed ProfileAuditor system would address this problem by extracting resume information, comparing technical claims with available GitHub and LeetCode evidence, calculating a Reality Score, and providing ATS and role-fit feedback.
 
 ## 2. Evidence and Current Situation
 
 - Resume review is frequently manual and time-consuming.
 - Project names and skill lists do not always provide evidence of actual technical work.
-- GitHub and LeetCode data can provide useful signals, but access, identity, and completeness vary.
-- A score without evidence or limitations can create unfair decisions.
-- The current prototype already supports PDF/DOCX upload, parsing, verification, scoring, ATS analysis, role-fit analysis, and interview invitations.
-- The current prototype uses in-memory storage and therefore is suitable for demonstration or development, not yet for production records.
+- GitHub and LeetCode data can provide useful supporting evidence, but availability varies.
+- A score should be explained and should not replace human judgment.
+- A proposed system could combine resume parsing, public-profile verification, scoring, ATS analysis, and role-fit analysis in one workflow.
+- The initial version would focus on demonstrating the main workflow with sample resumes.
 
 ## 3. Problem Alternatives Considered
 
 | Alternative | Description | Strengths | Weaknesses |
 |---|---|---|---|
-| A1: Continue manual review | Recruiters inspect resumes and public profiles independently. | No development cost; human judgment remains central. | Slow, inconsistent, difficult to scale, limited audit trail. |
-| A2: Resume keyword / ATS checker only | Analyze resume text against a job description. | Simple implementation; useful editing feedback. | Does not verify whether technical claims have public evidence. |
-| A3: ProfileAuditor verification platform | Parse resumes, verify public technical evidence, calculate scores, and provide ATS feedback. | Combines screening signals and resume improvement in one workflow. | Integration failures, privacy concerns, possible bias, and identity limitations. |
-| A4: Full ATS integration | Build a persistent multi-user recruiting platform with workflow integrations. | Strong long-term business capability. | Larger scope, higher cost, more security and compliance work. |
+| A1: Continue manual review | Review resumes and public profiles independently. | No development cost; human judgment remains central. | Slow and inconsistent. |
+| A2: ATS checker only | Compare resume text with a job description. | Simple and useful for editing feedback. | Does not verify technical claims. |
+| A3: ProfileAuditor | Parse resumes, check public technical evidence, calculate scores, and provide feedback. | Combines verification and resume improvement. | Evidence may be incomplete or unavailable. |
+| A4: Full ATS integration | Build a complete recruiting platform with workflow integrations. | Useful for a larger future system. | Outside the scope of this academic project. |
 
 ## 4. Selected Problem and Proposed Solution
 
 **Selected problem:** Reduce the time and inconsistency involved in reviewing technical resume claims while giving candidates useful resume feedback.
 
-**Proposed solution:** Build ProfileAuditor as a human-assisted audit tool that:
+**Proposed solution:** Develop ProfileAuditor as a human-assisted audit tool that:
 
 1. Accepts PDF and DOCX resumes.
 2. Extracts structured candidate information.
-3. Verifies available technical claims using GitHub and LeetCode evidence.
+3. Checks technical claims against available GitHub and LeetCode evidence.
 4. Shows verified, unverified, and unavailable evidence separately.
-5. Calculates an explainable Reality Score and component breakdown.
+5. Calculates an explainable Reality Score.
 6. Provides ATS health and optional role-fit analysis.
-7. Allows editing and DOCX export.
-8. Supports recruiter-approved interview invitations.
+7. Allows resume editing and DOCX export.
 
 ## 5. Feasibility Study
 
 ### 5.1 Technical Feasibility
 
-**Assessment: Feasible for an MVP; production deployment requires additional engineering.**
+**Assessment: Feasible for the proposed academic project.**
 
-The repository already contains a React frontend, FastAPI backend, parser services, GitHub and LeetCode integrations, scoring logic, ATS analysis, DOCX conversion, and Docker configuration. PDF/DOCX processing and HTTP API workflows are technically achievable with the current stack.
+The proposed system can be implemented using a React frontend and FastAPI backend. Suitable libraries and public APIs are available for PDF/DOCX parsing, GitHub and LeetCode checks, scoring, ATS analysis, and DOCX conversion. The main workflow is technically achievable for an academic project.
 
-**Technical gaps to resolve:**
+**Technical limitations:**
 
-- Replace in-memory dictionaries with persistent, protected storage.
-- Add authentication and role-based authorization.
-- Handle provider rate limits, timeouts, schema changes, and retries.
-- Improve parsing confidence and correction workflows.
-- Separate missing evidence from provider failures.
-- Add evidence references for score explanations.
-- Test fairness and reduce the risk of treating soft skills as failed technical claims.
+- The initial version can use temporary or simple local storage for demonstration.
+- Results depend on the availability of GitHub and LeetCode data.
+- Resume extraction may require user correction.
+- Missing public evidence must be shown as unavailable, not as proof that a claim is false.
 
 ### 5.2 Operational Feasibility
 
-**Assessment: Feasible for recruiter-assisted review.**
+**Assessment: Feasible for a demonstration and controlled evaluation.**
 
-The workflow matches a real screening activity: upload, review, verify, inspect results, and optionally invite. Recruiters can use the result as a decision-support signal if the interface explains limitations and does not present the score as a final hiring decision.
+The workflow is simple: upload a resume, process its contents, verify available evidence, and display the results. A reviewer can inspect the extracted data and score before making any decision.
 
 **Operational requirements:**
 
-- A clear review workflow with loading, error, and retry states.
-- A visible explanation of what was and was not verified.
-- Manual review before adverse candidate decisions.
-- Support process for incorrect extraction or disputed claims.
-- Monitoring for external provider failures and email delivery.
+- Show clear upload, processing, error, and results states.
+- Explain which information was verified and which was unavailable.
+- Allow manual review of extracted data and generated scores.
 
 ### 5.3 Economic Feasibility
 
-**Assessment: Feasible as a low-cost MVP; operating costs depend on scale.**
+**Assessment: Feasible at student-project scale.**
 
-The existing open-source Python and React stack keeps initial development cost low. Main recurring costs are hosting, API usage, email delivery, optional LLM calls, storage, monitoring, and security maintenance.
+The Python and React stack and available open-source libraries can keep development cost low. The project can be demonstrated locally using public APIs and sample data.
 
-| Cost area | MVP approach | Production consideration |
+| Cost area | Project approach | Cost consideration |
 |---|---|---|
-| Hosting | Docker or low-cost cloud deployment | Scalable backend and frontend hosting |
-| Storage | Temporary files and in-memory demo state | Managed database and object storage |
-| Verification | Public provider APIs | Rate-limit management and approved API access |
-| Scoring | Rule-based scoring with optional AI fallback | Cost controls, versioning, and explainability |
-| Email | Configured email provider | Delivery tracking and compliance |
-| Operations | Basic logs and health endpoint | Monitoring, alerting, backups, and incident response |
+| Hosting | Local Docker setup | No hosting cost for demonstration |
+| Storage | Simple local or temporary storage | Permanent storage is outside the initial scope |
+| Verification | Public GitHub and LeetCode data | API availability may vary |
+| Scoring | Rule-based scoring | No additional software cost |
+| Email | Optional email service | Not required for the core demonstration |
 
-### 5.4 Legal, Ethical, and Privacy Feasibility
+### 5.4 Ethical Feasibility
 
-**Assessment: Feasible only with explicit safeguards and stakeholder approval.**
+**Assessment: Feasible with basic safeguards.**
 
-Resume data contains personal information, and public technical activity may be incomplete or incorrectly attributed. The system must obtain appropriate consent, disclose automated processing, protect personal data, provide correction/deletion processes, and keep human reviewers responsible for decisions.
+Resume data and public profile information may be incomplete or incorrectly attributed. The system should present verification as supporting evidence, not as a final judgment about a candidate.
 
 **Required safeguards:**
 
 - Do not claim that an unverified item is false.
-- Treat missing public data as unknown unless a stakeholder-approved policy says otherwise.
+- Treat missing public data as unknown.
 - Separate technical evidence from soft-skill assessment.
-- Display provider limitations and data freshness.
-- Avoid automatic rejection or ranking without approved governance.
-- Define retention, deletion, access, and dispute policies.
-- Do not expose secrets or unnecessary resume content in logs.
+- Do not use the score as an automatic rejection decision.
+- Do not expose unnecessary personal information in demonstration logs.
 
 ### 5.5 Schedule Feasibility
 
-**Assessment: Feasible for a staged MVP.**
+**Assessment: Feasible within an academic project schedule.**
 
 | Stage | Main outcome |
 |---|---|
-| Stage 1 | Validate stakeholders, problem, scoring policy, privacy expectations, and success measures. |
-| Stage 2 | Stabilize upload, parsing, verification, scoring, ATS analysis, and results workflow. |
-| Stage 3 | Add persistent storage, authentication, authorization, audit history, and provider resilience. |
-| Stage 4 | Pilot with controlled users, evaluate accuracy and fairness, and refine requirements. |
-| Stage 5 | Prepare production release and operational support. |
+| Stage 1 | Identify the problem and collect stakeholder requirements. |
+| Stage 2 | Design the UML diagrams, architecture, and database schema. |
+| Stage 3 | Implement upload, parsing, verification, scoring, and results modules. |
+| Stage 4 | Test the workflow with sample resumes and document the results. |
 
 ## 6. Feasibility Decision
 
-**Decision:** Proceed with a controlled MVP and stakeholder validation.
+**Decision:** Proceed with the ProfileAuditor academic project.
 
-The problem is meaningful, the current technical foundation is sufficient for an MVP, and the workflow is operationally plausible. Production approval is conditional on persistent storage, security controls, privacy policy, evidence explainability, provider resilience, and fairness review.
+The problem is meaningful, suitable technologies are available, and the proposed workflow is achievable within the academic project scope. Permanent storage and advanced deployment features are outside the initial scope.
 
 ## 7. Success Measures
 
-- Reduced average time to review a technical resume.
-- Percentage of audits completed without manual technical troubleshooting.
-- Percentage of verified claims with understandable evidence.
-- Recruiter confidence in the score explanation.
-- Candidate ability to identify and correct extraction issues.
-- Provider failure rate and successful retry rate.
-- No critical privacy or security incidents during pilot.
-- Stakeholder agreement that the tool supports, rather than replaces, human judgment.
+- The main upload-to-results workflow completes successfully.
+- Technical claims are clearly marked as verified, unverified, or unavailable.
+- The score has an understandable component breakdown.
+- Users can identify and correct extraction issues.
+- The system does not present the score as a replacement for human judgment.
 
 ## 8. Recommendation and Next Actions
 
 1. Conduct interviews using [Stakeholder_Interview_Questionnaire.md](Stakeholder_Interview_Questionnaire.md).
-2. Confirm scoring treatment for soft skills and missing public profiles.
-3. Define a minimum evidence and explanation standard for each verified claim.
-4. Prioritize persistent storage, authentication, privacy, and error handling before production.
-5. Run a small pilot with representative resumes and a documented evaluation set.
-6. Update the SRS and project charter based on approved stakeholder decisions.
+2. Confirm how missing public profiles and soft skills should be displayed.
+3. Finalize the requirements, UML diagrams, architecture, and relational schema.
+4. Test the main workflow using representative sample resumes.
+5. Update the SRS and project charter based on stakeholder feedback.

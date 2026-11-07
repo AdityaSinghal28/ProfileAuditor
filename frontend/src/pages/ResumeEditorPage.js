@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 import { API_BASE_URL } from '../config/api';
 import WorkflowStepper from '../components/WorkflowStepper';
 
@@ -322,9 +323,9 @@ function ResumeEditorPage() {
   const lineCount = resumeText.split('\n').filter(Boolean).length;
 
   const getScoreColor = (score) => {
-    if (score >= 80) return '#10B981'; // Emerald
-    if (score >= 60) return '#F59E0B'; // Amber
-    return '#EF4444'; // Red
+    if (score >= 80) return 'rgb(var(--ok))';
+    if (score >= 60) return 'rgb(var(--warn))';
+    return 'rgb(var(--bad))';
   };
 
   const getFontClass = () => {
@@ -334,7 +335,7 @@ function ResumeEditorPage() {
   };
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto space-y-6 pt-2 pb-16 px-3 sm:px-6">
+    <div className="w-full max-w-[1500px] mx-auto space-y-6 pb-16">
       {/* Hidden File Input */}
       <input
         type="file"
@@ -348,16 +349,16 @@ function ResumeEditorPage() {
       <WorkflowStepper activeResumeId={resumeId} candidateName={activeDocumentName} />
 
       {/* Top Header Command Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#111418] p-5 rounded-xl border border-[#1F242D] shadow-card">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface p-5 rounded-xl shadow-card">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-xl font-bold text-white tracking-tight">Exact-Layout Resume Document Editor</h1>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold font-mono flex items-center gap-1.5">
-              <span className={`w-1.5 h-1.5 rounded-sm ${loading ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'}`} />
+            <h1 className="text-xl font-bold text-fg tracking-tight">Exact-Layout Resume Document Editor</h1>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-ok/10 text-ok border border-ok/25 font-semibold font-mono flex items-center gap-1.5">
+              <span className={`w-1.5 h-1.5 rounded-sm ${loading ? 'bg-warn animate-ping' : 'bg-ok'}`} />
               <span>{loading ? 'Evaluating...' : 'Live Real-Time ATS'}</span>
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-fg-muted mt-0.5">
             Preserves the exact layout, font hierarchy, and design of your original resume with in-place editing and real-time ATS optimization.
           </p>
         </div>
@@ -367,11 +368,11 @@ function ResumeEditorPage() {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingDoc}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-200 text-[#090A0C] transition-all shadow-sm active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand hover:bg-brand-hover text-brand-fg transition-all shadow-sm active:scale-[0.98] disabled:opacity-50"
           >
             {uploadingDoc ? (
               <>
-                <svg className="animate-spin h-3.5 w-3.5 text-[#090A0C]" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin h-3.5 w-3.5 text-brand-fg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
@@ -390,7 +391,7 @@ function ResumeEditorPage() {
           <button
             onClick={handleExportDocx}
             disabled={exportingDocx}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-sm active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand hover:bg-brand-hover text-brand-fg transition-all shadow-sm active:scale-[0.98] disabled:opacity-50"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -400,9 +401,9 @@ function ResumeEditorPage() {
 
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-[#161A20] hover:bg-[#1E232B] text-slate-200 border border-[#262C36] transition-all"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-sunken hover:bg-line text-fg border border-line transition-all"
           >
-            <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3.5 h-3.5 text-fg-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
             </svg>
             <span>Print / PDF</span>
@@ -410,7 +411,7 @@ function ResumeEditorPage() {
 
           <button
             onClick={handleCopy}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#161A20] hover:bg-[#1E232B] text-slate-200 border border-[#262C36] transition-all"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-sunken hover:bg-line text-fg border border-line transition-all"
           >
             {copied ? 'Copied' : 'Copy Text'}
           </button>
@@ -418,17 +419,17 @@ function ResumeEditorPage() {
           {resumeId ? (
             <Link
               to={`/results/${resumeId}`}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#161A20] hover:bg-[#1E232B] text-slate-200 border border-[#262C36] transition-all focus:ring-2 focus:ring-white focus:outline-none"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sunken hover:bg-line text-fg border border-line transition-all focus:ring-2 focus:ring-brand focus:outline-none"
             >
               <span>View Footprint Audit</span>
-              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5 text-fg-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
           ) : (
             <Link
               to="/upload"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#161A20] hover:bg-[#1E232B] text-slate-200 border border-[#262C36] transition-all focus:ring-2 focus:ring-white focus:outline-none"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sunken hover:bg-line text-fg border border-line transition-all focus:ring-2 focus:ring-brand focus:outline-none"
             >
               <span>Audit a Resume</span>
             </Link>
@@ -437,17 +438,17 @@ function ResumeEditorPage() {
       </div>
 
       {/* Editor Customizer & Ribbon Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#111418] px-4 py-3 rounded-xl border border-[#1F242D] text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-surface px-4 py-3 rounded-xl border border-line text-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* View Mode Switcher */}
-          <div className="flex items-center bg-[#161A20] p-0.5 rounded-lg border border-[#262C36]">
+          <div className="flex items-center bg-sunken p-0.5 rounded-lg border border-line">
             <button
               type="button"
               onClick={() => setEditorMode('visual')}
               className={`px-3 py-1 rounded-md font-medium transition-all ${
                 editorMode === 'visual'
-                  ? 'bg-white text-[#090A0C] font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-surface text-fg font-semibold shadow-sm ring-1 ring-line'
+                  : 'text-fg-muted hover:text-fg'
               }`}
             >
               Exact Resume View
@@ -457,8 +458,8 @@ function ResumeEditorPage() {
               onClick={() => setEditorMode('source')}
               className={`px-3 py-1 rounded-md font-medium transition-all ${
                 editorMode === 'source'
-                  ? 'bg-white text-[#090A0C] font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-surface text-fg font-semibold shadow-sm ring-1 ring-line'
+                  : 'text-fg-muted hover:text-fg'
               }`}
             >
               Raw Text
@@ -466,12 +467,12 @@ function ResumeEditorPage() {
           </div>
 
           {/* Typography Selector */}
-          <div className="flex items-center gap-1.5 text-slate-400">
+          <div className="flex items-center gap-1.5 text-fg-muted">
             <span>Font:</span>
             <select
               value={fontFamily}
               onChange={(e) => setFontFamily(e.target.value)}
-              className="bg-[#161A20] text-slate-200 border border-[#262C36] rounded-md px-2 py-1 text-xs focus:outline-none"
+              className="bg-sunken text-fg border border-line rounded-md px-2 py-1 text-xs focus:outline-none"
             >
               <option value="sans">Original Sans (Inter/Calibri)</option>
               <option value="serif">Original Serif (Garamond/Times)</option>
@@ -480,23 +481,23 @@ function ResumeEditorPage() {
           </div>
 
           {/* Canvas Zoom Controls */}
-          <div className="flex items-center gap-1 bg-[#161A20] px-2 py-0.5 rounded-lg border border-[#262C36] text-slate-300">
-            <span className="text-[11px] text-slate-400 font-medium mr-1">Zoom:</span>
+          <div className="flex items-center gap-1 bg-sunken px-2 py-0.5 rounded-lg border border-line text-fg-muted">
+            <span className="text-[11px] text-fg-muted font-medium mr-1">Zoom:</span>
             <button
               type="button"
               onClick={() => setZoomLevel(prev => Math.max(60, prev - 10))}
-              className="px-1.5 py-0.5 rounded hover:bg-[#262C36] text-slate-300 hover:text-white font-bold"
+              className="px-1.5 py-0.5 rounded hover:bg-line text-fg-muted hover:text-fg font-bold"
               title="Zoom Out"
             >
               -
             </button>
-            <span className="text-[11px] font-mono px-1 min-w-[38px] text-center font-semibold text-white">
+            <span className="text-[11px] font-mono px-1 min-w-[38px] text-center font-semibold text-fg">
               {zoomLevel}%
             </span>
             <button
               type="button"
               onClick={() => setZoomLevel(prev => Math.min(150, prev + 10))}
-              className="px-1.5 py-0.5 rounded hover:bg-[#262C36] text-slate-300 hover:text-white font-bold"
+              className="px-1.5 py-0.5 rounded hover:bg-line text-fg-muted hover:text-fg font-bold"
               title="Zoom In"
             >
               +
@@ -504,7 +505,7 @@ function ResumeEditorPage() {
             <button
               type="button"
               onClick={() => setZoomLevel(100)}
-              className="text-[10px] text-slate-400 hover:text-white ml-1 underline underline-offset-2"
+              className="text-[10px] text-fg-muted hover:text-fg ml-1 underline underline-offset-2"
               title="Reset Zoom to 100%"
             >
               100%
@@ -515,20 +516,20 @@ function ResumeEditorPage() {
           <div className="relative inline-block text-left group">
             <button
               type="button"
-              className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#161A20] hover:bg-[#1E232B] text-slate-200 border border-[#262C36] transition-all flex items-center gap-1"
+              className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-sunken hover:bg-line text-fg border border-line transition-all flex items-center gap-1"
             >
               <span>+ Action Verb</span>
-              <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3 h-3 text-fg-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <div className="hidden group-hover:grid grid-cols-3 gap-1 absolute z-30 left-0 mt-1 w-64 p-2 bg-[#161A20] border border-[#262C36] rounded-lg shadow-xl">
+            <div className="hidden group-hover:grid grid-cols-3 gap-1 absolute z-30 left-0 mt-1 w-64 p-2 bg-sunken border border-line rounded-lg shadow-xl">
               {ACTION_VERBS.map((verb, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => insertText(`• ${verb} `)}
-                  className="text-left text-[11px] px-2 py-1 rounded hover:bg-[#1F242D] text-slate-300 hover:text-white transition-colors"
+                  className="text-left text-[11px] px-2 py-1 rounded hover:bg-line text-fg-muted hover:text-fg transition-colors"
                 >
                   {verb}
                 </button>
@@ -542,7 +543,7 @@ function ResumeEditorPage() {
               key={idx}
               type="button"
               onClick={() => insertText(snip)}
-              className="px-2 py-1 rounded-md text-[10px] font-medium bg-[#161A20] hover:bg-[#1E232B] text-slate-300 hover:text-white border border-[#262C36] transition-all hidden sm:inline-block"
+              className="px-2 py-1 rounded-md text-[10px] font-medium bg-sunken hover:bg-line text-fg-muted hover:text-fg border border-line transition-all hidden sm:inline-block"
             >
               + Metric {idx + 1}
             </button>
@@ -551,27 +552,27 @@ function ResumeEditorPage() {
 
         {/* Action Controls & Counters */}
         <div className="flex items-center gap-3 text-[11px]">
-          <span className="text-slate-400 font-mono">
+          <span className="text-fg-muted font-mono">
             {wordCount} words • {lineCount} lines
           </span>
-          <span className="text-slate-600">•</span>
+          <span className="text-fg-subtle">•</span>
           <button
             onClick={() => setShowJdInput(!showJdInput)}
-            className="text-emerald-400 hover:text-emerald-300 font-medium underline underline-offset-2"
+            className="text-ok hover:text-ok font-medium underline underline-offset-2"
           >
             {showJdInput ? 'Hide JD' : 'Target Job Description'}
           </button>
-          <span className="text-slate-600">•</span>
+          <span className="text-fg-subtle">•</span>
           <button
             onClick={handleLoadSample}
-            className="text-slate-400 hover:text-white underline underline-offset-2"
+            className="text-fg-muted hover:text-fg underline underline-offset-2"
           >
             Sample
           </button>
-          <span className="text-slate-600">•</span>
+          <span className="text-fg-subtle">•</span>
           <button
             onClick={handleClear}
-            className="text-red-400 hover:text-red-300 underline underline-offset-2"
+            className="text-bad hover:text-bad underline underline-offset-2"
           >
             Clear
           </button>
@@ -580,21 +581,21 @@ function ResumeEditorPage() {
 
       {/* Upload Error Notice */}
       {uploadError && (
-        <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-800/60 text-red-300 text-xs flex items-center justify-between">
+        <div className="p-3.5 rounded-xl bg-bad/10 border border-bad/25 text-bad text-xs flex items-center justify-between">
           <span>{uploadError}</span>
-          <button onClick={() => setUploadError('')} className="text-red-400 hover:text-white font-bold ml-2">Dismiss</button>
+          <button onClick={() => setUploadError('')} className="text-bad hover:text-fg font-bold ml-2">Dismiss</button>
         </div>
       )}
 
       {/* Optional Target JD Box */}
       {showJdInput && (
-        <div className="p-4 rounded-xl bg-[#111418] border border-[#1F242D] space-y-2">
+        <div className="p-4 rounded-xl bg-surface border border-line space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            <span className="text-xs font-bold uppercase tracking-wider text-fg-muted">
               Target Job Description / Tech Stack Match
             </span>
             {analysis?.role_analysis && (
-              <span className="text-xs font-mono font-bold text-emerald-400">
+              <span className="text-xs font-mono font-bold text-ok">
                 JD Fit Match: {analysis.role_analysis.role_fit_score}%
               </span>
             )}
@@ -604,25 +605,25 @@ function ResumeEditorPage() {
             value={targetJd}
             onChange={(e) => setTargetJd(e.target.value)}
             placeholder="Paste Job Description requirements (e.g. Go, Kubernetes, PostgreSQL, Docker, Redis)..."
-            className="w-full text-xs p-3 rounded-lg bg-[#161A20] text-white border border-[#262C36] focus:outline-none focus:border-white placeholder-slate-600"
+            className="w-full text-xs p-3 rounded-lg bg-sunken text-fg border border-line focus:outline-none focus:border-brand placeholder-fg-subtle"
           />
         </div>
       )}
 
       {/* Main Workspace Split */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
         {/* Left Column: Authentic Exact Layout Document Canvas */}
-        <div className="xl:col-span-8 space-y-3">
+        <div className="min-w-0 space-y-3">
           {editorMode === 'visual' ? (
             /* Visual Exact Resume Paper Sheet */
-            <div className="bg-[#0B0E14] p-4 sm:p-8 rounded-2xl border border-[#1F242D] shadow-2xl flex justify-center overflow-x-auto">
+            <div className="bg-sunken p-3 sm:p-5 rounded-xl shadow-card flex overflow-x-auto">
               <div
                 style={{
                   transform: zoomLevel !== 100 ? `scale(${zoomLevel / 100})` : 'none',
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out'
                 }}
-                className={`w-fit min-w-[800px] max-w-none min-h-[980px] bg-white text-slate-900 shadow-2xl rounded-sm ${
+                className={`mx-auto w-fit min-w-[640px] max-w-none min-h-[980px] bg-white text-slate-900 shadow-2xl rounded-sm ${
                   documentType === 'pdf' ? 'p-0 overflow-visible' : 'p-8 sm:p-12 w-full max-w-[860px]'
                 } border border-slate-300 ${getFontClass()}`}
               >
@@ -632,14 +633,14 @@ function ResumeEditorPage() {
                   contentEditable
                   suppressContentEditableWarning
                   onInput={handlePaperInput}
-                  dangerouslySetInnerHTML={{ __html: resumeHtml }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(resumeHtml) }}
                   className={`focus:outline-none min-h-[850px] select-text ${documentType === 'pdf' ? '' : 'leading-relaxed'}`}
                 />
               </div>
             </div>
           ) : (
             /* Plain Text Mode */
-            <div className="bg-[#111418] rounded-xl border border-[#1F242D] p-4 shadow-card">
+            <div className="bg-surface rounded-xl border border-line p-4 shadow-card">
               <textarea
                 rows={30}
                 value={resumeText}
@@ -648,15 +649,15 @@ function ResumeEditorPage() {
                   setResumeHtml(textToExactHtml(e.target.value));
                 }}
                 placeholder="Paste or edit resume text here..."
-                className="w-full bg-transparent text-slate-100 font-mono text-xs leading-relaxed focus:outline-none placeholder-slate-600 resize-y"
+                className="w-full bg-transparent text-fg font-mono text-xs leading-relaxed focus:outline-none placeholder-fg-subtle resize-y"
                 spellCheck="false"
               />
             </div>
           )}
 
           {/* Quick Section Adders Bar */}
-          <div className="flex flex-wrap gap-1.5 p-2 bg-[#111418] rounded-xl border border-[#1F242D]">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider py-1 px-2">
+          <div className="flex flex-wrap gap-1.5 p-2 bg-surface rounded-xl border border-line">
+            <span className="text-[10px] font-bold text-fg-muted uppercase tracking-wider py-1 px-2">
               Insert Section:
             </span>
             {Object.keys(SECTION_TEMPLATES).map((sec, idx) => (
@@ -664,7 +665,7 @@ function ResumeEditorPage() {
                 key={idx}
                 type="button"
                 onClick={() => insertText(SECTION_TEMPLATES[sec])}
-                className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-[#161A20] hover:bg-[#1E232B] text-blue-400 border border-blue-500/20 transition-all"
+                className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-sunken hover:bg-line text-brand border border-brand/20 transition-all"
               >
                 + {sec}
               </button>
@@ -673,14 +674,14 @@ function ResumeEditorPage() {
         </div>
 
         {/* Right Column: Live Real-Time ATS Score & Diagnostics */}
-        <div className="xl:col-span-4 space-y-4 xl:sticky xl:top-6">
+        <div className="space-y-4 xl:sticky xl:top-20">
           {/* Main Score Radial Meter */}
-          <div className="bg-[#111418] p-5 rounded-xl border border-[#1F242D] shadow-card text-center space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-[#1F242D]">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="bg-surface p-5 rounded-xl shadow-card text-center space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-line">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-fg-muted">
                 Live ATS Health Score
               </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-[#161A20] text-slate-300 font-semibold border border-[#262C36]">
+              <span className="text-xs px-2 py-0.5 rounded bg-sunken text-fg-muted font-semibold border border-line">
                 {atsData.health_label || 'Evaluating...'}
               </span>
             </div>
@@ -694,7 +695,7 @@ function ResumeEditorPage() {
                     cy="60"
                     r="50"
                     fill="none"
-                    stroke="#1F242D"
+                    stroke="rgb(var(--line))"
                     strokeWidth="8"
                   />
                   <circle
@@ -712,10 +713,10 @@ function ResumeEditorPage() {
                 </svg>
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-bold text-white leading-none font-mono">
+                  <span className="text-3xl font-bold text-fg leading-none font-mono">
                     {atsScore}
                   </span>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 font-mono">
+                  <span className="text-[10px] text-fg-subtle uppercase tracking-widest mt-1 font-mono">
                     / 100
                   </span>
                 </div>
@@ -724,62 +725,62 @@ function ResumeEditorPage() {
 
             {/* Live Sub-Score Grid */}
             <div className="grid grid-cols-2 gap-2 text-left pt-1">
-              <div className="p-2.5 rounded-lg bg-[#161A20] border border-[#262C36]">
-                <span className="text-[10px] text-slate-400 block font-medium">Impact Metrics</span>
-                <span className="text-xs font-bold text-white font-mono">{Math.round(atsData.sub_scores?.impact_metrics || 0)}%</span>
-                <span className="text-[10px] text-emerald-400 block">{atsData.metric_count || 0} detected</span>
+              <div className="p-2.5 rounded-lg bg-sunken border border-line">
+                <span className="text-[10px] text-fg-muted block font-medium">Impact Metrics</span>
+                <span className="text-xs font-bold text-fg font-mono">{Math.round(atsData.sub_scores?.impact_metrics || 0)}%</span>
+                <span className="text-[10px] text-ok block">{atsData.metric_count || 0} detected</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-[#161A20] border border-[#262C36]">
-                <span className="text-[10px] text-slate-400 block font-medium">Action Verbs</span>
-                <span className="text-xs font-bold text-white font-mono">{Math.round(atsData.sub_scores?.action_verbs || 0)}%</span>
-                <span className="text-[10px] text-emerald-400 block">{atsData.action_verbs_count || 0} unique</span>
+              <div className="p-2.5 rounded-lg bg-sunken border border-line">
+                <span className="text-[10px] text-fg-muted block font-medium">Action Verbs</span>
+                <span className="text-xs font-bold text-fg font-mono">{Math.round(atsData.sub_scores?.action_verbs || 0)}%</span>
+                <span className="text-[10px] text-ok block">{atsData.action_verbs_count || 0} unique</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-[#161A20] border border-[#262C36]">
-                <span className="text-[10px] text-slate-400 block font-medium">Structure</span>
-                <span className="text-xs font-bold text-white font-mono">{Math.round(atsData.sub_scores?.structure_completeness || 0)}%</span>
-                <span className="text-[10px] text-slate-400 block">Completeness</span>
+              <div className="p-2.5 rounded-lg bg-sunken border border-line">
+                <span className="text-[10px] text-fg-muted block font-medium">Structure</span>
+                <span className="text-xs font-bold text-fg font-mono">{Math.round(atsData.sub_scores?.structure_completeness || 0)}%</span>
+                <span className="text-[10px] text-fg-muted block">Completeness</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-[#161A20] border border-[#262C36]">
-                <span className="text-[10px] text-slate-400 block font-medium">Length Balance</span>
-                <span className="text-xs font-bold text-white font-mono">{Math.round(atsData.sub_scores?.formatting_health || 0)}%</span>
-                <span className="text-[10px] text-slate-400 block">{wordCount} words</span>
+              <div className="p-2.5 rounded-lg bg-sunken border border-line">
+                <span className="text-[10px] text-fg-muted block font-medium">Length Balance</span>
+                <span className="text-xs font-bold text-fg font-mono">{Math.round(atsData.sub_scores?.formatting_health || 0)}%</span>
+                <span className="text-[10px] text-fg-muted block">{wordCount} words</span>
               </div>
             </div>
           </div>
 
           {/* Action Verbs Detected & Suggestions */}
-          <div className="bg-[#111418] p-4 rounded-xl border border-[#1F242D] shadow-card space-y-2 text-xs">
-            <div className="flex items-center justify-between pb-1.5 border-b border-[#1F242D]">
-              <span className="font-bold uppercase tracking-wider text-slate-300 text-[10px]">
+          <div className="bg-surface p-4 rounded-xl shadow-card space-y-2 text-xs">
+            <div className="flex items-center justify-between pb-1.5 border-b border-line">
+              <span className="font-bold uppercase tracking-wider text-fg-muted text-[10px]">
                 Active Verbs in Document ({atsData.action_verbs?.length || 0})
               </span>
             </div>
             {atsData.action_verbs && atsData.action_verbs.length > 0 ? (
               <div className="flex flex-wrap gap-1 pt-1">
                 {atsData.action_verbs.map((v, i) => (
-                  <span key={i} className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 text-[10px] border border-emerald-500/20 font-mono">
+                  <span key={i} className="px-2 py-0.5 rounded bg-ok/10 text-ok text-[10px] border border-ok/25 font-mono">
                     {v}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-[11px] text-slate-500 italic">No strong action verbs detected yet. Try adding 'Architected' or 'Optimized'.</p>
+              <p className="text-[11px] text-fg-subtle italic">No strong action verbs detected yet. Try adding 'Architected' or 'Optimized'.</p>
             )}
           </div>
 
           {/* Real-time Diagnostics & Improvement Tips */}
-          <div className="bg-[#111418] p-4 rounded-xl border border-[#1F242D] shadow-card space-y-3 text-xs">
+          <div className="bg-surface p-4 rounded-xl shadow-card space-y-3 text-xs">
             <div>
-              <div className="flex items-center justify-between pb-1.5 border-b border-[#1F242D]">
-                <span className="font-bold text-emerald-400 uppercase tracking-wider text-[10px]">
+              <div className="flex items-center justify-between pb-1.5 border-b border-line">
+                <span className="font-bold text-ok uppercase tracking-wider text-[10px]">
                   Passed Checks ({atsData.passed_checks?.length || 0})
                 </span>
-                <span className="text-[10px] font-semibold text-emerald-400 font-mono">PASSED</span>
+                <span className="text-[10px] font-semibold text-ok font-mono">PASSED</span>
               </div>
               <ul className="space-y-1.5 pt-2">
                 {atsData.passed_checks?.map((check, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-slate-300 text-[11px]">
-                    <span className="w-1.5 h-1.5 rounded-sm bg-emerald-400 mt-1.5 flex-shrink-0"></span>
+                  <li key={idx} className="flex items-start gap-2 text-fg-muted text-[11px]">
+                    <span className="w-1.5 h-1.5 rounded-sm bg-ok mt-1.5 flex-shrink-0"></span>
                     <span>{check}</span>
                   </li>
                 ))}
@@ -787,17 +788,17 @@ function ResumeEditorPage() {
             </div>
 
             {atsData.improvement_tips && atsData.improvement_tips.length > 0 && (
-              <div className="pt-2 border-t border-[#1F242D]">
-                <div className="flex items-center justify-between pb-1.5 border-b border-[#1F242D]">
-                  <span className="font-bold text-amber-400 uppercase tracking-wider text-[10px]">
+              <div className="pt-2 border-t border-line">
+                <div className="flex items-center justify-between pb-1.5 border-b border-line">
+                  <span className="font-bold text-warn uppercase tracking-wider text-[10px]">
                     Live Suggestions ({atsData.improvement_tips.length})
                   </span>
-                  <span className="text-[10px] font-semibold text-amber-400 font-mono">TIPS</span>
+                  <span className="text-[10px] font-semibold text-warn font-mono">TIPS</span>
                 </div>
                 <ul className="space-y-1.5 pt-2">
                   {atsData.improvement_tips.map((tip, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-slate-300 text-[11px]">
-                      <span className="w-1.5 h-1.5 rounded-sm bg-amber-400 mt-1.5 flex-shrink-0"></span>
+                    <li key={idx} className="flex items-start gap-2 text-fg-muted text-[11px]">
+                      <span className="w-1.5 h-1.5 rounded-sm bg-warn mt-1.5 flex-shrink-0"></span>
                       <span>{tip}</span>
                     </li>
                   ))}

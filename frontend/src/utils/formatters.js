@@ -20,7 +20,7 @@ export const cleanHandle = (handle) => {
 };
 
 export const sanitizeFileName = (name, ext = 'docx') => {
-  const clean = (name || 'Resume').replace(/[^a-zA-Z0-9_\-]/g, '_');
+  const clean = (name || 'Resume').replace(/[^a-zA-Z0-9_-]/g, '_');
   return `${clean}.${ext}`;
 };
 

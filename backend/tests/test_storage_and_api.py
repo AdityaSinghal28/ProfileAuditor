@@ -5,6 +5,7 @@ Test storage decoupling and API endpoint integration without external dependenci
 import sys
 import os
 import asyncio
+import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -46,7 +47,8 @@ def test_storage():
     print("✅ app.core.storage tests passed!")
 
 
-async def async_test_endpoints():
+@pytest.mark.asyncio
+async def test_endpoints():
     print("Testing endpoint handlers directly...")
     
     # Test root & health
@@ -76,5 +78,5 @@ async def async_test_endpoints():
 
 if __name__ == "__main__":
     test_storage()
-    asyncio.run(async_test_endpoints())
+    asyncio.run(test_endpoints())
     print("\n🎉 ALL STORAGE & API INTEGRATION TESTS PASSED SUCCESSFULLY!")
